@@ -1,0 +1,29 @@
+name: resource
+on: [push, pull_request]
+jobs:
+  build:
+    name: resource
+    runs-on: ubuntu-18.04
+    strategy:
+      max-parallel: 150
+      fail-fast: false
+      matrix:
+        go: [1.0, 1.1, 1.2]
+        flag: [A, B, C, D, E, F, G, H, I, J]
+    continue-on-error: true
+    timeout-minutes: 360
+    env:
+        NUM_JOBS: 150
+        JOB: ${{ matrix.go }}
+    steps:
+    - name: Pre-Ops ${{ matrix.go }}
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+      id: go
+    - name: Prepare
+      uses: actions/checkout@v1
+    - name: Install
+      run: |
+        chmod +x "${GITHUB_WORKSPACE}/install.sh"
+        "${GITHUB_WORKSPACE}/install.sh"
